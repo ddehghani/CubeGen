@@ -11,6 +11,7 @@ let X = (a + b + c);
 let Y = (a * b) + (b * c) + (c * a); 
 let Z = a * b * c; 
   document.getElementById("polynomial").innerHTML = "x^3 - (" + X + "x^2) + (" + Y + "x) - (" + Z + ") = 0";
+  document.getElementById("answer").innerHTML = "";
 }
 function reveal() {
   document.getElementById("answer").innerHTML = "Roots are: " + a + ", " + b + ", " + c;
