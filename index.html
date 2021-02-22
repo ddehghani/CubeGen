@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+let a, b, c;
+function generate() {
+a = Math.floor((Math.random() * 21) + -10);
+b = Math.floor((Math.random() * 21) + -10);
+c = Math.floor((Math.random() * 21) + -10);
+let X = (a + b + c); 
+let Y = (a * b) + (b * c) + (c * a); 
+let Z = a * b * c; 
+  document.getElementById("polynomial").innerHTML = "x^3 - (" + X + "x^2) + (" + Y + "x) - (" + Z + ") = 0";
+}
+function reveal() {
+  document.getElementById("answer").innerHTML = "Roots are: " + a + ", " + b + ", " + c;
+}
+</script>
+</head>
+<body>
+<h2>Cubic Polynomial Generator</h2>
+
+<p id="polynomial"></p>
+<button type="button" onclick="generate()"> Generate a New Polynomial</button>
+<button type="button" onclick="reveal()">Reveal the Answer</button>
+<p id="answer"></p>
+
+</body>
+</html> 
