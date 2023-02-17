@@ -8,19 +8,56 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script>
-  let r1, r2, r3;
-  function generate() {
-  r1 = Math.floor((Math.random() * 21) + -10);
-  r2 = Math.floor((Math.random() * 21) + -10);
-  r3 = Math.floor((Math.random() * 21) + -10);
-  let b = -1 * (r1 + r2 + r3); 
-  let c = r3 * (r1 + r2) + r1 * r2;
-  let d = -1 * r1 * r2 * r3; 
-  document.getElementById("polynomial").innerHTML = "\\begin{equation*}x^{3} " + (b>0? "+ ":"") + (b==0? "": b + "x^{2} ") + (c>0? "+ ":"") + (c==0? "":c + "x ") + (d>0? "+ ":"") + (d==0? "":d) + " = 0\\end{equation*}";
-  document.getElementById("answer").innerHTML = " ";
-  MathJax.typeset();
+  let roots = [], maxValue = 10, minValue = -5;
+  function onload() {
+    generate();
   }
-  function reveal() {document.getElementById("answer").innerHTML = "Roots are " + r1 + ", " + r2 + ", and " + r3;}
+  function generate() {
+    roots = [];
+    for (let i = 0; i < 3; i++)
+      roots.push(Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue);
+    
+    let coefs = [1, -(roots[0] + roots[1] + roots[2]), 
+      roots[2] * (roots[0] + roots[1]) + roots[0] * roots[1], 
+      -roots[0] * roots[1] * roots[2]];
+    document.getElementById("polynomial").innerHTML = formatEquation(coefs, ["x^3", "x^2", "x"]);
+    document.getElementById("answer").innerHTML = " ";
+    MathJax.typeset();
+  }
+  function reveal() {
+    let result = "Roots: " + "\\begin{equation*}" ;
+    let labels = ["x_1", "x_2", "x_3"];
+    for (let i = 0; i < roots.length; i++)
+      result += labels[i] + " = " + roots[i] + (i < roots.length - 1 ? ", " : "" );
+    document.getElementById("answer").innerHTML = result + "\\end{equation*}";
+    MathJax.typeset();
+  }
+  function formatEquation(coefs, labels) {
+    const gcd = gcdArray(coefs);
+    coefs.forEach((element, index, arr) => {
+      arr[index] = element/gcd;
+    });
+    let result = "\\begin{equation*}" + (coefs[0] == 0 ? "" : (coefs[0] == 1 ? "" : coefs[0]) + labels[0]);
+    for (let i = 1; i < coefs.length; i++) {
+      if (coefs[i] != 0)
+        result += (coefs[i] > 0 ? "+": "") + (coefs[i] == 1 && i < coefs.length - 1 ? "": coefs[i]) + (i < labels.length? labels[i] : "");
+    }
+    return result + "=0\\end{equation*}";
+  }
+
+  function gcdArray(nums) {
+    let result = nums[0];
+    for (let i = 1; i < nums.length; i++) {
+      result = gcd(result, nums[i]);
+    }
+    return result;
+  }
+
+  function gcd(a, b) {
+    if (b == 0)
+      return a;
+    return gcd(b, a%b);
+  }
   </script>
   <style type="text/css">
     body{
@@ -28,13 +65,17 @@
     }
   </style>
 </head>
-<body onload="generate()">
-   <div class="text-center mt-5">
-    <h1 class="mt-4 mb-4 display-6">Cubic Polynomial Generator</h1>
-    <p id="polynomial" class="mt-5"></p>
-    <button type="button" class="btn btn-block btn-dark mt-1 px-4" onclick="generate()"> Generate a New Polynomial</button>
-    <button type="button" class="btn btn-block btn-dark mt-1 px-4" onclick="reveal()">Reveal the Answer</button>
-    <p id="answer" class="mt-3"></p>
-  </div>
+<body onload="onload()">
+  <form>
+    <fieldset class="text-center vstack gap-3 mt-5">
+      <legend class="display-6">Cubic Polynomial Generator</legend>
+      <output id="polynomial" class="mt-5"></output>
+      <div>
+        <button type="button" class="btn btn-block btn-dark mt-1 px-4" onclick="generate()"> Generate a New Polynomial</button>
+        <button type="button" class="btn btn-block btn-dark mt-1 px-4" onclick="reveal()">Reveal the Answer</button>
+      </div>
+      <outputp id="answer" class="mt-3"></output>
+    </fieldset>
+  </form>
 </body>
 </html> 
